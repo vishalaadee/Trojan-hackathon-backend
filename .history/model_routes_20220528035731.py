@@ -90,7 +90,7 @@ def enter_symptoms(patient_id:int,symptoms:List[int]):
     df.drop(df.columns[3:127],axis=1,inplace=True)
     train_df = df.drop('Unnamed: 133', axis=1)
     #need to pickle the model
-    test_df=pd.read_csv('Testing.csv')
+    test_df=pd.read_csv('')
     test_df.drop(test_df.columns[3:127],axis=1,inplace=True)
     x=train_df.iloc[:,:-1]
     y=train_df.iloc[:,8]

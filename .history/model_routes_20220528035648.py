@@ -86,11 +86,11 @@ conf = ConnectionConfig(
 
 @auth_router.post("/home/symptoms/{patient_id}")
 def enter_symptoms(patient_id:int,symptoms:List[int]):
-    df=pd.read_csv('Training.csv')
+    df=pd.read_csv('')
     df.drop(df.columns[3:127],axis=1,inplace=True)
     train_df = df.drop('Unnamed: 133', axis=1)
     #need to pickle the model
-    test_df=pd.read_csv('Testing.csv')
+    test_df=pd.read_csv(r'C:\Users\HP\Desktop\Trojan-Code\Testing.csv')
     test_df.drop(test_df.columns[3:127],axis=1,inplace=True)
     x=train_df.iloc[:,:-1]
     y=train_df.iloc[:,8]
