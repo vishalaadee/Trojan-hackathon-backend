@@ -42,6 +42,6 @@ class Appointments(Base):
     a_id=Column(Integer,primary_key=True)
     d_id=Column(Integer,ForeignKey('doctors.d_id'))
     p_id=Column(Integer,ForeignKey('patients.p_id'))
-    status=Column(Integer,unique=False,default=0)
+    status=Column(String(1),unique=False,default='P')
     def __repr__(self):
         return f"<Appointment {self.name}"

@@ -280,31 +280,4 @@ def doctor_list(db:Session=Depends(get_db)):
     doctors=session.query(Doctor).all()
     return doctors
 
-@auth_router.post("/book appointment/{p_id}/{d_id}")
-def book_appointment(pid:int,did:int,db:Session=Depends(get_db)):
-    patient=session.query(User).filter(User.p_id==pid).first()
-    doctor=session.query(Doctor).filter(Doctor.d_id==did).first()
-    status=session.query(Appointments.status).filter(Appointments.p_id==pid).filter(Appointments.d_id==did).all()
-    if status>=0:
-        return {"message":"Appointment already booked"}
-    if patient and doctor:
-        appointment=Appointments(p_id=pid,d_id=did,status=0)
-        session.add(appointment)
-        session.commit()
-        return {"message":"Appointment requested successfully"}
-    else:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-        detail="Error in booking appointment")
-
-
-@auth_router.post("/my appointments/{p_id}")
-def my_appointments(pid:int,db:Session=Depends(get_db)):
-    d_id=session.query(Appointments.d_id).filter(Appointments.p_id==pid).all()
-    appointment_details={"doctor_details":[],"status":[]}
-    doc_details=db.query(Doctor).filter(Doctor.d_id==d_id).all()
-    status=session.query(Appointments.status).filter(Appointments.p_id==pid).all()
-    appointment_count=len(d_id)
-    for i in range(appointment_count):
-        appointment_details["doctor_details"].append(doc_details[i])
-        appointment_details["status"].append(status[i])    
-    return appointment_details
+@auth_router.post("/book appointment/{email}")

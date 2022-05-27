@@ -304,7 +304,6 @@ def my_appointments(pid:int,db:Session=Depends(get_db)):
     doc_details=db.query(Doctor).filter(Doctor.d_id==d_id).all()
     status=session.query(Appointments.status).filter(Appointments.p_id==pid).all()
     appointment_count=len(d_id)
-    for i in range(appointment_count):
+    for i in range(appoointment_count):
         appointment_details["doctor_details"].append(doc_details[i])
         appointment_details["status"].append(status[i])    
-    return appointment_details

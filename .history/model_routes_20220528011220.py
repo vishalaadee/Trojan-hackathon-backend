@@ -307,4 +307,4 @@ def my_appointments(pid:int,db:Session=Depends(get_db)):
     for i in range(appointment_count):
         appointment_details["doctor_details"].append(doc_details[i])
         appointment_details["status"].append(status[i])    
-    return appointment_details
+    
