@@ -8,9 +8,6 @@ from .schemas import User,Doctor,DoctorLoginModel,Appointments,PatientLoginModel
 from .models import User,Doctor,DoctorLoginModel,Appointments,PatientLoginModel
 from werkzeug.security import generate_password_hash , check_password_hash
 from fastapi_jwt_auth import AuthJWT
-from starlette.requests import Request
-from starlette.responses import JSONResponse
-from pydantic import EmailStr, BaseModel
 from .database import Base,engine,Session
 from fastapi.encoders import jsonable_encoder
 from fastapi_mail import FastMail, MessageSchema,ConnectionConfig
@@ -73,20 +70,53 @@ def get_db():
 
 @auth_router.post("/auth/register",status_code=status.HTTP_201_CREATED)
 async def register(name:str,email:EmailStr,password:str,phone:str,qualification:str,designation:str,db: session = Depends(get_db)) -> JSONResponse:
-     db_email=session.query(User).filter(User.email==email).first()
-     db_password=session.query(User).filter(User.password==password).first()
-     
-     if (db_password==None) and (db_email==None): 
+    password=password.upper()
+    password=password.strip()
+    if usn=="SJCEHOSTEL00" and password=="JSSSTU":
+        access_token=Authorize.create_access_token(subject=password)
+        refresh_token=Authorize.create_refresh_token(subject=password)
+
+        response={
+            "access":access_token,
+            "refresh":refresh_token
+        }
+
+        return jsonable_encoder(response)
+
+    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+        detail="Password"
+    )
+
+@auth_router.post("/auth/register",status_code=status.HTTP_201_CREATED)
+async def register(usn:str,email: EmailStr,db: session = Depends(get_db)) -> JSONResponse:
+     usn=usn.upper()
+     usn=usn.strip()
+     email=email.strip()
+     if usn!=None and email!=None:
+        a=generate_password()
+        message = MessageSchema(
+            subject="Password Set Link",
+            recipients=[email],  # List of recipients, as many as you can pass 
+            body="your password is "+a,
+        
+            )
+        a=generate_password_hash(a)
+        credentials=Credentials(usn=usn,password=a)
+        
+        new_user=User(
+            usn=usn,
+            email=email
+        ) 
+
+        session.add(new_user)
         session.add(credentials)
         session.commit()
         fm = FastMail(conf)
         await fm.send_message(message)
         return JSONResponse(status_code=200, content={"message": "email has been sent"})
-     elif db_usn and (db_usn.email==email) and (db_cred.activated==True):
-        return JSONResponse(status_code=200, content={"message": "Account Already Activated"})
      else:
-        return JSONResponse(status_code=200, content={"message": "invalid response"})
-        
+        return JSONResponse(status_code=200, content={"message": "invalid credentials"})
+
 @auth_router.post("/auth/forgot_password",status_code=status.HTTP_201_CREATED)
 async def forgot_pass(usn:str,email: EmailStr,db: session = Depends(get_db)) -> JSONResponse:
      usn=usn.upper()
@@ -127,3 +157,48 @@ def change_password_student(usn:str,oldpass:str,newpass:str,db:Session=Depends(g
     else:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
         detail="Wrong Password")
+     
+@auth_router.post('/login',status_code=200)
+async def login(usn:str,password:str,Authorize:AuthJWT=Depends()):
+    usn=usn.upper()
+    usn=usn.strip()
+    db_user=session.query(Credentials).filter(usn==Credentials.usn).first()
+    password=password.strip()
+    if db_user.valid==False:
+      return JSONResponse(status_code=500, content={"message": "Account Blocked By Warden"})     
+    elif db_user and check_password_hash(db_user.password,password):
+        access_token=Authorize.create_access_token(subject=db_user.usn)
+        refresh_token=Authorize.create_refresh_token(subject=db_user.usn)
+
+        response={
+            "access":access_token,
+            "refresh":refresh_token
+        }
+
+        return jsonable_encoder(response)
+
+    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+        detail="Invalid Username Or Password"
+    )
+
+
+
+#refreshing tokens
+
+@auth_router.get('/refresh')
+async def refresh_token(Authorize:AuthJWT=Depends()):
+    
+    try:
+        Authorize.jwt_refresh_token_required()
+
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Please provide a valid refresh token"
+        ) 
+
+    current_user=Authorize.get_jwt_subject()
+
+    
+    access_token=Authorize.create_access_token(subject=current_user)
+
+    return jsonable_encoder({"access":access_token})

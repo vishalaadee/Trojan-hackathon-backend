@@ -74,6 +74,4 @@ class RegisterPatient(BaseModel):
     p_dob:datetime
     p_gender:str
     class config:
-        orm_mode=True
-        arbitrary_types_allowed = True
-        
+                

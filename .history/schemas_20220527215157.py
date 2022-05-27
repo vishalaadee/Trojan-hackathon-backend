@@ -65,15 +65,4 @@ class RegisterDoctor(BaseModel):
     class config:
         orm_mode=True
         arbitrary_types_allowed = True
-class RegisterPatient(BaseModel):
-    p_name:str
-    p_email:EmailStr
-    p_password:str
-    p_phone:str
-    p_blood_type:str
-    p_dob:datetime
-    p_gender:str
-    class config:
-        orm_mode=True
-        arbitrary_types_allowed = True
-        
+class 

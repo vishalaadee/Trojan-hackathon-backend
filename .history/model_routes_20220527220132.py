@@ -8,9 +8,6 @@ from .schemas import User,Doctor,DoctorLoginModel,Appointments,PatientLoginModel
 from .models import User,Doctor,DoctorLoginModel,Appointments,PatientLoginModel
 from werkzeug.security import generate_password_hash , check_password_hash
 from fastapi_jwt_auth import AuthJWT
-from starlette.requests import Request
-from starlette.responses import JSONResponse
-from pydantic import EmailStr, BaseModel
 from .database import Base,engine,Session
 from fastapi.encoders import jsonable_encoder
 from fastapi_mail import FastMail, MessageSchema,ConnectionConfig

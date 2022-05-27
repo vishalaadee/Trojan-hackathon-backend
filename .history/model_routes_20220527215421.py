@@ -5,12 +5,9 @@ from fastapi import File,UploadFile,Form,Body,Response,FastAPI, BackgroundTasks,
 from typing import List, Optional
 from fastapi.exceptions import HTTPException
 from .schemas import User,Doctor,DoctorLoginModel,Appointments,PatientLoginModel,EmailSchema,MessageSchema
-from .models import User,Doctor,DoctorLoginModel,Appointments,PatientLoginModel
+from .models import User,Doctor,DoctorLoginModel,Appointments,PatientLoginModel,EmailSchema,MessageSchema
 from werkzeug.security import generate_password_hash , check_password_hash
 from fastapi_jwt_auth import AuthJWT
-from starlette.requests import Request
-from starlette.responses import JSONResponse
-from pydantic import EmailStr, BaseModel
 from .database import Base,engine,Session
 from fastapi.encoders import jsonable_encoder
 from fastapi_mail import FastMail, MessageSchema,ConnectionConfig
@@ -72,11 +69,24 @@ def get_db():
 
 
 @auth_router.post("/auth/register",status_code=status.HTTP_201_CREATED)
-async def register(name:str,email:EmailStr,password:str,phone:str,qualification:str,designation:str,db: session = Depends(get_db)) -> JSONResponse:
+async def register(usn:str,email:EmailStr,db: session = Depends(get_db)) -> JSONResponse:
+     usn=usn.upper()
+     usn=usn.strip()
+     email=email.strip()
      db_email=session.query(User).filter(User.email==email).first()
-     db_password=session.query(User).filter(User.password==password).first()
+     db_usn=session.query(User).filter(User.usn==usn).first()
+     db_cred=session.query(Credentials).filter(Credentials.usn==usn).first()
      
-     if (db_password==None) and (db_email==None): 
+     if db_usn and (db_usn.email==email) and db_cred==None:
+        a=generate_password()
+        message = MessageSchema(
+            subject="Password Set Link",
+            recipients=[email],  # List of recipients, as many as you can pass 
+            body="your password is "+a,
+        
+            )
+        a=generate_password_hash(a)
+        credentials=Credentials(usn=usn,password=a,activated=True)
         session.add(credentials)
         session.commit()
         fm = FastMail(conf)
