@@ -301,8 +301,8 @@ def book_appointment(pid:int,did:int,db:Session=Depends(get_db)):
         detail="Error in booking appointment")
 
 
-@auth_router.get("/patient appointments/{p_id}")
-def patient_appointments(pid:int,db:Session=Depends(get_db)):
+@auth_router.get("/my appointments/{p_id}")
+def my_appointments(pid:int,db:Session=Depends(get_db)):
     d_id=session.query(Appointments.d_id).filter(Appointments.p_id==pid).all()
     appointment_details={"doctor_details":[],"status":[]}
     doc_details=db.query(Doctor).filter(Doctor.d_id==d_id).all()
@@ -334,20 +334,4 @@ def payment_status(d_id:int,p_id:int,db:Session=Depends(get_db)):
     else:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
         detail="Appointment Not Done")
-@auth_router.get("/my appointments/{d_id}")
-def doctor_appointments(d_id:int,db:Session=Depends(get_db)):
-    p_id=session.query(Appointments.p_id).filter(Appointments.d_id==d_id).all()
-    appointment_details={"patient_details":[],"status":[]}
-    pat_details=db.query(User).filter(User.p_id==p_id).all()
-    status=session.query(Appointments.status).filter(Appointments.d_id==d_id).all()
-    appointment_count=len(p_id)
-    for i in range(appointment_count):
-        appointment_details["patient_details"].append(pat_details[i])
-        appointment_details["status"].append(status[i])    
-    return appointment_details
-
-@auth_router.get("/patient details/{p_id}")
-def patient_details(p_id:int,db:Session=Depends(get_db)):
-    patient=db.query(User).filter(User.p_id==p_id).first()
-    return patient
-
+@auth_router.

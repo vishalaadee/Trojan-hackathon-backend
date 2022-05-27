@@ -345,9 +345,5 @@ def doctor_appointments(d_id:int,db:Session=Depends(get_db)):
         appointment_details["patient_details"].append(pat_details[i])
         appointment_details["status"].append(status[i])    
     return appointment_details
-
 @auth_router.get("/patient details/{p_id}")
-def patient_details(p_id:int,db:Session=Depends(get_db)):
-    patient=db.query(User).filter(User.p_id==p_id).first()
-    return patient
-
+d
