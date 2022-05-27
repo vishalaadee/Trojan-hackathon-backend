@@ -30,8 +30,8 @@ class DoctorLoginModel(BaseModel):
     d_password:str
     
 class PatientLoginModel(BaseModel):
-    p_email:str
-    p_password:str
+    d_email:str
+    password:str
 
 class Appointments(BaseModel):
     p_id:int
@@ -54,6 +54,18 @@ class MessageSchema(BaseModel):
         orm_mode=True
         arbitrary_types_allowed = True
 
+class RegisterDoctor(BaseModel):
+    d_name:str
+    d_email:EmailStr
+    d_password:str
+    d_phone:str
+    d_qualification:str
+    d_description:str
+    d_expertise:str
+    class config:
+        orm_mode=True
+        arbitrary_types_allowed = True
+
 class Credentials(BaseModel):
     email: EmailStr
     password: str
@@ -61,3 +73,16 @@ class Credentials(BaseModel):
     class Config:
         orm_mode=True
         arbitrary_types_allowed = True
+
+class RegisterPatient(BaseModel):
+    p_name:str
+    p_email:EmailStr
+    p_password:str
+    p_phone:str
+    p_blood_type:str
+    p_dob:datetime
+    p_gender:str
+    class config:
+        orm_mode=True
+        arbitrary_types_allowed = True
+        

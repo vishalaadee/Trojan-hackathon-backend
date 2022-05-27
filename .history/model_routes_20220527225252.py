@@ -6,13 +6,13 @@ from fastapi import File,UploadFile,Form,Body,Response,FastAPI, BackgroundTasks,
 from typing import List, Optional
 from fastapi.exceptions import HTTPException
 from schemas import Credentials,User,Doctor,DoctorLoginModel,Appointments,PatientLoginModel,EmailSchema,MessageSchema
-from models import User,Doctor,Credentials,Appointments
+from models import User,Doctor,Credentials,DoctorLoginModel,Appointments,PatientLoginModel
 from werkzeug.security import generate_password_hash , check_password_hash
 from fastapi_jwt_auth import AuthJWT
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 from pydantic import EmailStr, BaseModel
-from database import Base,engine,Session
+from .database import Base,engine,Session
 from fastapi.encoders import jsonable_encoder
 from fastapi_mail import FastMail, MessageSchema,ConnectionConfig
 from starlette.requests import Request

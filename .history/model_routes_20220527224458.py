@@ -1,18 +1,17 @@
-from datetime import datetime
 import email,io,xlsxwriter,ast,json
 from io import BytesIO
 from fastapi import File,UploadFile,Form,Body,Response,FastAPI, BackgroundTasks,APIRouter,status,Depends
 # from fastapi.responses import StreamingResponse
 from typing import List, Optional
 from fastapi.exceptions import HTTPException
-from schemas import Credentials,User,Doctor,DoctorLoginModel,Appointments,PatientLoginModel,EmailSchema,MessageSchema
-from models import User,Doctor,Credentials,Appointments
+from .schemas import Credentials,User,Doctor,DoctorLoginModel,Appointments,PatientLoginModel,EmailSchema,MessageSchema
+from .models import User,Doctor,Credentials,DoctorLoginModel,Appointments,PatientLoginModel
 from werkzeug.security import generate_password_hash , check_password_hash
 from fastapi_jwt_auth import AuthJWT
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 from pydantic import EmailStr, BaseModel
-from database import Base,engine,Session
+from .database import Base,engine,Session
 from fastapi.encoders import jsonable_encoder
 from fastapi_mail import FastMail, MessageSchema,ConnectionConfig
 from starlette.requests import Request
@@ -150,7 +149,7 @@ async def register_doctor(name:str,email:EmailStr,phone:str,qualification:str,de
 
 
 @auth_router.post("/auth/register_patient",status_code=status.HTTP_201_CREATED)
-async def register_patient(name:str,email:EmailStr,phone:str,blood_type:str,dob:datetime,gender:str,db: session = Depends(get_db)) -> JSONResponse:
+async def register_patient(name:str,email:EmailStr,phone:str,blood_type:str,dob:dat,db: session = Depends(get_db)) -> JSONResponse:
      email=email.upper()
      db_cred=session.query(Credentials).filter(Credentials.email==email).first()
      
@@ -164,8 +163,7 @@ async def register_patient(name:str,email:EmailStr,phone:str,blood_type:str,dob:
             )
         a=generate_password_hash(a)
         credentials=Credentials(email=email,password=a,activated=True)
-        details=User(p_name=name,p_email=email,p_phone=phone,p_blood_type=blood_type,p_dob=dob,p_gender=gender)
-        session.add(details)
+        details=Doctor(name=name,email=email,phone=phone,qualification=qualification,description=description)
         session.add(credentials)
         session.commit()
         fm = FastMail(conf)
@@ -175,50 +173,6 @@ async def register_patient(name:str,email:EmailStr,phone:str,blood_type:str,dob:
         return JSONResponse(status_code=200, content={"message": "Account Already Activated"})
      else:
         return JSONResponse(status_code=200, content={"message": "invalid response"})
-
-@auth_router.post('/login',status_code=200)
-async def login(usn:str,password:str,Authorize:AuthJWT=Depends()):
-    usn=usn.upper()
-    usn=usn.strip()
-    db_user=session.query(Credentials).filter(usn==Credentials.usn).first()
-    password=password.strip()
-    if db_user and check_password_hash(db_user.password,password):
-        access_token=Authorize.create_access_token(subject=db_user.usn)
-        refresh_token=Authorize.create_refresh_token(subject=db_user.usn)
-
-        response={
-            "access":access_token,
-            "refresh":refresh_token
-        }
-
-        return jsonable_encoder(response)
-
-    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-        detail="Invalid Username Or Password"
-    )
-
-
-
-#refreshing tokens
-
-@auth_router.get('/refresh')
-async def refresh_token(Authorize:AuthJWT=Depends()):
-    
-    try:
-        Authorize.jwt_refresh_token_required()
-
-    except Exception as e:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Please provide a valid refresh token"
-        ) 
-
-    current_user=Authorize.get_jwt_subject()
-
-    
-    access_token=Authorize.create_access_token(subject=current_user)
-
-    return jsonable_encoder({"access":access_token})
-
 
 # @auth_router.post("/auth/forgot_password",status_code=status.HTTP_201_CREATED)
 # async def forgot_pass(usn:str,email: EmailStr,db: session = Depends(get_db)) -> JSONResponse:

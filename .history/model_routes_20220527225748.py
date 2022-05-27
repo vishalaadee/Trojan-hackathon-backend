@@ -6,7 +6,7 @@ from fastapi import File,UploadFile,Form,Body,Response,FastAPI, BackgroundTasks,
 from typing import List, Optional
 from fastapi.exceptions import HTTPException
 from schemas import Credentials,User,Doctor,DoctorLoginModel,Appointments,PatientLoginModel,EmailSchema,MessageSchema
-from models import User,Doctor,Credentials,Appointments
+from models import User,Doctor,Credentials,Appointments,PatientLoginModel
 from werkzeug.security import generate_password_hash , check_password_hash
 from fastapi_jwt_auth import AuthJWT
 from starlette.requests import Request

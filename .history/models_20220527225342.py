@@ -37,7 +37,7 @@ class Credentials(Base):
     def __repr__(self):
         return f"<Cred {self.name}"
 
-class Appointments(Base):
+class Appointment(Base):
     __tablename__='appointments'
     a_id=Column(Integer,primary_key=True)
     d_id=Column(Integer,ForeignKey('doctors.d_id'))

@@ -1,7 +1,7 @@
 from pydantic import BaseModel, EmailStr
 from sqlalchemy.sql.elements import Null
 from sqlalchemy.sql.sqltypes import Date, DateTime, Float,Integer
-from database import Base
+from .database import Base
 from sqlalchemy import Column,Integer,Boolean,Text,String,ForeignKey
 
     
@@ -37,7 +37,7 @@ class Credentials(Base):
     def __repr__(self):
         return f"<Cred {self.name}"
 
-class Appointments(Base):
+class Appointment(Base):
     __tablename__='appointments'
     a_id=Column(Integer,primary_key=True)
     d_id=Column(Integer,ForeignKey('doctors.d_id'))
