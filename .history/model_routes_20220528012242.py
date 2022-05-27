@@ -319,7 +319,6 @@ def cancel_appointment(pid:int,did:int,db:Session=Depends(get_db)):
     else:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
         detail="Error in cancelling appointment")
-
 @auth_router.post("/payment success/{d_id}/{p_id}")
 def payment_status(d_id:int,p_id:int,db:Session=Depends(get_db)):
     appointment=session.query(Appointments).filter(Appointments.p_id==p_id).filter(Appointments.d_id==d_id).first()
