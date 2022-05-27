@@ -159,7 +159,7 @@ async def register_patient(name:str,email:EmailStr,phone:str,blood_type:str,age:
         message = MessageSchema(
             subject="Password Set Link",
             recipients=[email],  # List of recipients, as many as you can pass 
-            body="your password is "+a,
+            body="your password is "+a+"Your Secret Key is patient000",
         
             )
         a=generate_password_hash(a)
