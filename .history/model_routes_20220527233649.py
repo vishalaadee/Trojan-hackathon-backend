@@ -131,7 +131,7 @@ async def register_doctor(name:str,email:EmailStr,phone:str,qualification:str,de
         message = MessageSchema(
             subject="Password Set Link",
             recipients=[email],  # List of recipients, as many as you can pass 
-            body="your password is "+a+"Your Secret Key is 123doctor",
+            body="your password is "+a+"Your Secret Key is "+"",
         
             )
         a=generate_password_hash(a)
@@ -159,7 +159,7 @@ async def register_patient(name:str,email:EmailStr,phone:str,blood_type:str,age:
         message = MessageSchema(
             subject="Password Set Link",
             recipients=[email],  # List of recipients, as many as you can pass 
-            body="your password is "+a+"Your Secret Key is patient000",
+            body="your password is "+a,
         
             )
         a=generate_password_hash(a)
@@ -181,9 +181,9 @@ async def doctor_login(email:str,password:str,d_code:str,Authorize:AuthJWT=Depen
     email=email.upper()
     db_user=session.query(Credentials).filter(email==Credentials.email).first()
     password=password.strip()
-    if db_user and check_password_hash(db_user.password,password) and d_code=="123doctor":
-        access_token=Authorize.create_access_token(subject=db_user.email)
-        refresh_token=Authorize.create_refresh_token(subject=db_user.email)
+    if db_user and check_password_hash(db_user.password,password):
+        access_token=Authorize.create_access_token(subject=db_user.usn)
+        refresh_token=Authorize.create_refresh_token(subject=db_user.usn)
 
         response={
             "access":access_token,
@@ -196,26 +196,6 @@ async def doctor_login(email:str,password:str,d_code:str,Authorize:AuthJWT=Depen
         detail="Invalid Username Or Password"
     )
 
-
-@auth_router.post('/patient_login',status_code=200)
-async def patient_login(email:str,password:str,p_code:str,Authorize:AuthJWT=Depends()):
-    email=email.upper()
-    db_user=session.query(Credentials).filter(email==Credentials.email).first()
-    password=password.strip()
-    if db_user and check_password_hash(db_user.password,password) and p_code=="patient000":
-        access_token=Authorize.create_access_token(subject=db_user.email)
-        refresh_token=Authorize.create_refresh_token(subject=db_user.email)
-
-        response={
-            "access":access_token,
-            "refresh":refresh_token
-        }
-
-        return jsonable_encoder(response)
-
-    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-        detail="Invalid Username Or Password"
-    )
 
 
 #refreshing tokens

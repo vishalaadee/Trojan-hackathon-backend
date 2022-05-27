@@ -14,7 +14,7 @@ class User(BaseModel):
     p_email:EmailStr
     p_phone:str
     p_blood_type:str
-    p_age:int
+    p_dob:datetime
     p_gender:str
     
 class Doctor(BaseModel):
@@ -61,3 +61,4 @@ class Credentials(BaseModel):
     class Config:
         orm_mode=True
         arbitrary_types_allowed = True
+class 

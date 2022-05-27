@@ -10,7 +10,7 @@ class User(Base):
     p_id=Column(Integer,primary_key=True)
     p_name=Column(String(100),unique=False)
     p_email=Column(String(80),unique=False)
-    p_age=Column(Integer,unique=False)
+    p_dob=Column(Date,unique=False)
     p_gender=Column(String(1),unique=False)
     p_phone=Column(String(14),unique=False)
     p_blood_type=Column(String(14),unique=False)
