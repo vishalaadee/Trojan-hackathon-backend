@@ -206,7 +206,7 @@ async def patient_login(email:EmailStr,password:str,Authorize:AuthJWT=Depends())
     db_user=session.query(Credentials).filter(email==Credentials.email).first()
     password=password.strip()
     db_password=db_user.password.strip()
-    if db_user and (db_password == password):
+    if db_user and (db_password == password) :
         access_token=Authorize.create_access_token(subject=db_user.email)
         refresh_token=Authorize.create_refresh_token(subject=db_user.email)
 
