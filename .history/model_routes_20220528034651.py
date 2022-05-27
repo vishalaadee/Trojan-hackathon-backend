@@ -360,7 +360,8 @@ async def send_details_appointment(d_id:int,p_id:int,date:datetime,db:Session=De
         message = MessageSchema(
             subject="Consult Meeting Details Link",
             recipients=[email],  # List of recipients, as many as you can pass 
-            body="please join the meeting using the given link: "+str("https://video-chat-app-gus.herokuapp.com/c5d1a684-1aa0-40fb-92ee-75d489927914")+" your date and timings are  "+str(date) 
+            body="please join the meeting using the given link: "+str("https://video-chat-app-gus.herokuapp.com/c5d1a684-1aa0-40fb-92ee-75d489927914")+" your date and timings are  ",
+        
             )
         fm = FastMail(conf)
         

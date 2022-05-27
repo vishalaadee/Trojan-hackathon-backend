@@ -352,20 +352,22 @@ def patient_details(p_id:int,db:Session=Depends(get_db)):
     return patient
 
 @auth_router.post("/send_appointment_details/{d_id}/{p_id}")
-async def send_details_appointment(d_id:int,p_id:int,date:datetime,db:Session=Depends(get_db)):
+def send_details_appointment(d_id:int,p_id:int,db:Session=Depends(get_db)):
     status=session.query(Appointments.status).filter(Appointments.p_id==p_id).filter(Appointments.d_id==d_id).first()
-    email=session.query(Credentials.email).filter(Credentials.p_id==p_id).first()
-    
     if status==1:
         message = MessageSchema(
-            subject="Consult Meeting Details Link",
+            subject="Password Set Link",
             recipients=[email],  # List of recipients, as many as you can pass 
-            body="please join the meeting using the given link: "+str("https://video-chat-app-gus.herokuapp.com/c5d1a684-1aa0-40fb-92ee-75d489927914")+" your date and timings are  "+str(date) 
-            )
-        fm = FastMail(conf)
+            body="hello doctor "+name+" your password is "+a,
         
-        await fm.send_message(message)
-        return JSONResponse(status_code=200, content={"message": "meet invitation details has been sent"})
+            )
+    fm = FastMail(conf)
+    
+    await fm.send_message(message)
+       # return JSONResponse(status_code=200, content={"message": "email has been sent"})
+        
+        
+        return {"message":"Appointment details sent successfully"}
     else:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
         detail="Error in sending appointment details")
