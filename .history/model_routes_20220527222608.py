@@ -121,7 +121,7 @@ def get_db():
         db.close()
         
 @auth_router.post("/auth/register",status_code=status.HTTP_201_CREATED)
-async def register_doctor(name:str,email:EmailStr,phone:str,qualification:str,description:str,db: session = Depends(get_db)) -> JSONResponse:
+async def register_doct(name:str,email:EmailStr,phone:str,qualification:str,designation:str,db: session = Depends(get_db)) -> JSONResponse:
      email=email.upper()
      db_cred=session.query(Credentials).filter(Credentials.email==email).first()
      
@@ -135,7 +135,6 @@ async def register_doctor(name:str,email:EmailStr,phone:str,qualification:str,de
             )
         a=generate_password_hash(a)
         credentials=Credentials(email=email,password=a,activated=True)
-        details=Doctor(name=name,email=email,phone=phone,qualification=qualification,description=description)
         session.add(credentials)
         session.commit()
         fm = FastMail(conf)

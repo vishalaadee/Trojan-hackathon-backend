@@ -25,11 +25,11 @@ class Doctor(BaseModel):
     d_description:str
         
 class DoctorLoginModel(BaseModel):
-    d_email:str
+    d_name:str
     password:str
     
 class PatientLoginModel(BaseModel):
-    d_email:str
+    d_name:str
     password:str
 
 class Appointments(BaseModel):

@@ -22,9 +22,11 @@ class Doctor(Base):
     d_id=Column(Integer,primary_key=True)
     d_name=Column(String(100),unique=False)
     d_email=Column(String(80),unique=False)
-    d_phone=Column(String(14),unique=False)
-    d_qualification=Column(String(54),unique=False)
-    d_description=Column(String(54),unique=False)
+    d_dob=Column(DateTime,unique=False)
+    gender=Column(String(1),unique=False)
+    phone=Column(String(14),unique=False)
+    qualification=Column(String(54),unique=False)
+    description=Column(String(54),unique=False)
     
     def __repr__(self):
         return f"<Doctor {self.name}"

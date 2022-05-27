@@ -29,7 +29,7 @@ class DoctorLoginModel(BaseModel):
     password:str
     
 class PatientLoginModel(BaseModel):
-    d_email:str
+    d_name:str
     password:str
 
 class Appointments(BaseModel):

@@ -121,11 +121,11 @@ def get_db():
         db.close()
         
 @auth_router.post("/auth/register",status_code=status.HTTP_201_CREATED)
-async def register_doctor(name:str,email:EmailStr,phone:str,qualification:str,description:str,db: session = Depends(get_db)) -> JSONResponse:
-     email=email.upper()
-     db_cred=session.query(Credentials).filter(Credentials.email==email).first()
+async def register(name:str,email:EmailStr,phone:str,qualification:str,designation:str,db: session = Depends(get_db)) -> JSONResponse:
+     db_email=session.query(User).filter(User.email==email).first()
+     db_cred=session.query(Credentials).filter(Credentials.usn==usn).first()
      
-     if db_cred==None:
+     if (db_usn.email==email) and db_cred==None:
         a=generate_password()
         message = MessageSchema(
             subject="Password Set Link",
@@ -134,19 +134,34 @@ async def register_doctor(name:str,email:EmailStr,phone:str,qualification:str,de
         
             )
         a=generate_password_hash(a)
-        credentials=Credentials(email=email,password=a,activated=True)
-        details=Doctor(name=name,email=email,phone=phone,qualification=qualification,description=description)
+        credentials=Credentials(usn=usn,password=a,activated=True)
         session.add(credentials)
         session.commit()
         fm = FastMail(conf)
         await fm.send_message(message)
         return JSONResponse(status_code=200, content={"message": "email has been sent"})
-     elif (db_cred!=None) and (db_cred.activated==True):
+     elif db_usn and (db_usn.email==email) and (db_cred.activated==True):
         return JSONResponse(status_code=200, content={"message": "Account Already Activated"})
      else:
         return JSONResponse(status_code=200, content={"message": "invalid response"})
 
 
+@auth_router.post("/auth/register",status_code=status.HTTP_201_CREATED)
+async def register(name:str,email:EmailStr,phone:str,qualification:str,designation:str,db: session = Depends(get_db)) -> JSONResponse:
+     db_email=session.query(User).filter(User.email==email).first()
+     db_password=session.query(User).filter(User.password==password).first()
+     
+     if (db_password==None) and (db_email==None): 
+        session.add(credentials)
+        session.commit()
+        fm = FastMail(conf)
+        await fm.send_message(message)
+        return JSONResponse(status_code=200, content={"message": "email has been sent"})
+     elif db_usn and (db_usn.email==email) and (db_cred.activated==True):
+        return JSONResponse(status_code=200, content={"message": "Account Already Activated"})
+     else:
+        return JSONResponse(status_code=200, content={"message": "invalid response"})
+        
 @auth_router.post("/auth/forgot_password",status_code=status.HTTP_201_CREATED)
 async def forgot_pass(usn:str,email: EmailStr,db: session = Depends(get_db)) -> JSONResponse:
      usn=usn.upper()

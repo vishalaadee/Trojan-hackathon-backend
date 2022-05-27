@@ -12,6 +12,7 @@ class Settings(BaseModel):
 class User(BaseModel):
     p_name:str
     p_email:EmailStr
+    p_password:str
     p_phone:str
     p_blood_type:str
     p_dob:datetime
@@ -20,16 +21,17 @@ class User(BaseModel):
 class Doctor(BaseModel):
     d_name:str
     d_email:EmailStr
+    d_password:str
     d_phone:str
     d_qualification:str
-    d_description:str
+    d_designation:str
         
 class DoctorLoginModel(BaseModel):
-    d_email:str
+    d_name:str
     password:str
     
 class PatientLoginModel(BaseModel):
-    d_email:str
+    d_name:str
     password:str
 
 class Appointments(BaseModel):

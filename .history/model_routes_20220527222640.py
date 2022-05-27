@@ -135,7 +135,7 @@ async def register_doctor(name:str,email:EmailStr,phone:str,qualification:str,de
             )
         a=generate_password_hash(a)
         credentials=Credentials(email=email,password=a,activated=True)
-        details=Doctor(name=name,email=email,phone=phone,qualification=qualification,description=description)
+        details=Doctor(name=name,email=email,phone=phone,qualification=qualification,description=description,credentials=credentials)
         session.add(credentials)
         session.commit()
         fm = FastMail(conf)
