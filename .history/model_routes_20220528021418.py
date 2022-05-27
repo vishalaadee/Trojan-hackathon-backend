@@ -182,7 +182,8 @@ async def register_patient(name:str,email:EmailStr,phone:str,blood_type:str,age:
 async def doctor_login(email:EmailStr,password:str,Authorize:AuthJWT=Depends()):
     email=email.upper()
     db_user=session.query(Credentials).filter(email==Credentials.email).first()
-    password=password.strip()        
+    password=password.strip()
+        
     db_password=db_user.password.strip()
     if db_user and (db_password == password) :
         access_token=Authorize.create_access_token(subject=db_user.email)

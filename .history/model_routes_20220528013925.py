@@ -131,11 +131,10 @@ async def register_doctor(name:str,email:EmailStr,phone:str,qualification:str,de
         message = MessageSchema(
             subject="Password Set Link",
             recipients=[email],  # List of recipients, as many as you can pass 
-            body="hello doctor "+name+" your password is "+a,
+            body="hello doctor"+name+"your password is "+a,
         
             )
-        #a=generate_password_hash(a)
-        a=a.strip()
+        a=generate_password_hash(a)
         credentials=Credentials(email=email,password=a,activated=True)
         details=Doctor(d_name=name,d_email=email,d_phone=phone,d_qualification=qualification,d_description=description,d_expertise=expertise)
         session.add(credentials)
@@ -163,8 +162,7 @@ async def register_patient(name:str,email:EmailStr,phone:str,blood_type:str,age:
             body="hello"+name+ "your patient password is "+a,
         
             )
-        a=a.strip()
-        #a=generate_password_hash(a)
+        a=generate_password_hash(a)
         credentials=Credentials(email=email,password=a,activated=True)
         details=User(p_name=name,p_email=email,p_phone=phone,p_blood_type=blood_type,p_age=age,p_gender=gender)
         session.add(details)
@@ -179,25 +177,26 @@ async def register_patient(name:str,email:EmailStr,phone:str,blood_type:str,age:
         return JSONResponse(status_code=200, content={"message": "invalid response"})
 
 @auth_router.post('/doctor_login',status_code=200)
-async def doctor_login(email:EmailStr,password:str,Authorize:AuthJWT=Depends()):
+async def doctor_login(email:str,password:str,Authorize:AuthJWT=Depends()):
     email=email.upper()
     db_user=session.query(Credentials).filter(email==Credentials.email).first()
-    password=password.strip()        
-    db_password=db_user.password.strip()
-    if db_user and (db_password == password) :
-        access_token=Authorize.create_access_token(subject=db_user.email)
-        refresh_token=Authorize.create_refresh_token(subject=db_user.email)
+    password=password.strip()
+    if check_password_hash(password,db_user.password):
+        return 
+    return False
+    #     access_token=Authorize.create_access_token(subject=db_user.email)
+    #     refresh_token=Authorize.create_refresh_token(subject=db_user.email)
 
-        response={
-            "access":access_token,
-            "refresh":refresh_token
-        }
+    #     response={
+    #         "access":access_token,
+    #         "refresh":refresh_token
+    #     }
 
-        return jsonable_encoder(response)
+    #     return jsonable_encoder(response)
 
-    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-        detail="Invalid Username Or Password"
-    )
+    # raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+    #     detail="Invalid Username Or Password"
+    # )
 
 
 @auth_router.post('/patient_login',status_code=200)
@@ -205,8 +204,7 @@ async def patient_login(email:str,password:str,Authorize:AuthJWT=Depends()):
     email=email.upper()
     db_user=session.query(Credentials).filter(email==Credentials.email).first()
     password=password.strip()
-    db_password=db_user.password.strip()
-    if db_user and (db_password == password) :
+    if db_user and check_password_hash(db_user.password,password) :
         access_token=Authorize.create_access_token(subject=db_user.email)
         refresh_token=Authorize.create_refresh_token(subject=db_user.email)
 
