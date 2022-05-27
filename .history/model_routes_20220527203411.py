@@ -24,8 +24,9 @@ auth_router = APIRouter(
 
 #session=Session(bind=engine)
 
-@auth_router.post("/home/symptoms/{patient_id}")
-def enter_symptoms(patient_id:int,symptoms:List[int]):
+@auth_router.post("/home/symptoms/{}")
+def enter_symptoms():
+    print('hello')
     df=pd.read_csv(r'C:\Users\HP\Desktop\Trojan-Code\Training.csv')
     df.drop(df.columns[3:127],axis=1,inplace=True)
     train_df = df.drop('Unnamed: 133', axis=1)
@@ -45,7 +46,12 @@ def enter_symptoms(patient_id:int,symptoms:List[int]):
 
     prediction = tree.predict(input_data_reshaped)
 
-    return prediction[0]
+    # input_data_as_numpy_array= np.asarray(input_data)
+
+    # input_data_reshaped = input_data_as_numpy_array.reshape(1,-1)
+
+    
+    return {'prediction':prediction[0]}
 
 def generate_password():
     import random

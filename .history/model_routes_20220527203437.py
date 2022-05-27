@@ -45,7 +45,12 @@ def enter_symptoms(patient_id:int,symptoms:List[int]):
 
     prediction = tree.predict(input_data_reshaped)
 
-    return prediction[0]
+    # input_data_as_numpy_array= np.asarray(input_data)
+
+    # input_data_reshaped = input_data_as_numpy_array.reshape(1,-1)
+
+    
+    return {'prediction':prediction[0]}
 
 def generate_password():
     import random
