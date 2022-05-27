@@ -268,9 +268,9 @@ def change_password_student(email:EmailStr,oldpass:str,newpass:str,db:Session=De
     db_cred=session.query(Credentials).filter(Credentials.email==email).first()
     if db_cred and check_password_hash(db_cred[0].password,oldpass):
         newpass=generate_password_hash(newpass)
-        db_cred[0].password=newpass
+        db_user[0].password=newpass
         db.commit()
         return {"message":"Password changed successfully"}
     else:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-        detail="Wrong Credentials")
+        detail="Wrong Password")

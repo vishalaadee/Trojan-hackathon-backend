@@ -239,11 +239,15 @@ async def refresh_token(Authorize:AuthJWT=Depends()):
     return jsonable_encoder({"access":access_token})
 
 
-@auth_router.post("/forgot_password",status_code=status.HTTP_201_CREATED)
-async def forgot_pass(email: EmailStr,db: session = Depends(get_db)) -> JSONResponse:
-     email=email.upper()
-     db_cred=session.query(Credentials).filter(Credentials.email==email).first()
-     if db_cred!=None:
+@auth_router.post("/auth/forgot_password",status_code=status.HTTP_201_CREATED)
+async def forgot_pass(usn:str,email: EmailStr,db: session = Depends(get_db)) -> JSONResponse:
+     usn=usn.upper()
+     usn=usn.strip()
+     db_email=session.query(User).filter(User.email==email).first()
+     db_usn=session.query(User).filter(User.usn==usn).first()
+     db_cred=session.query(Credentials).filter(Credentials.usn==usn).first()
+     if db_usn and (db_usn.email==email) and db_cred!=None:
+        db_user= crud.get_item_by_credentials(db,usn)
         a=generate_password()
         message = MessageSchema(
             subject="Password Set Link",
@@ -252,25 +256,26 @@ async def forgot_pass(email: EmailStr,db: session = Depends(get_db)) -> JSONResp
         
             )
         a=generate_password_hash(a)
-        db_cred[0].password=a
+        db_user[0].password=a
         db.commit()
         fm = FastMail(conf)
         await fm.send_message(message)
         return JSONResponse(status_code=200, content={"message": "email has been sent"})
-     elif (db_cred==None):
+     elif db_usn and (db_usn.email==email) and (db_cred==None):
         return JSONResponse(status_code=200, content={"message": "Account yet not activated"})
      else:
-         return JSONResponse(status_code=200, content={"message": "invalid email"})     
+         return JSONResponse(status_code=200, content={"message": "invalid response"})     
 
-@auth_router.post("/home/password/changepassword/{usn}")
-def change_password_student(email:EmailStr,oldpass:str,newpass:str,db:Session=Depends(get_db)):
-    email=email.upper()
-    db_cred=session.query(Credentials).filter(Credentials.email==email).first()
-    if db_cred and check_password_hash(db_cred[0].password,oldpass):
-        newpass=generate_password_hash(newpass)
-        db_cred[0].password=newpass
-        db.commit()
-        return {"message":"Password changed successfully"}
-    else:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-        detail="Wrong Credentials")
+# @auth_router.post("/home/password/changepassword/{usn}")
+# def change_password_student(usn:str,oldpass:str,newpass:str,db:Session=Depends(get_db)):
+#     usn=usn.upper()
+#     usn=usn.strip()
+#     db_user= crud.get_item_by_credentials(db,usn)
+#     if db_user and check_password_hash(db_user[0].password,oldpass):
+#         newpass=generate_password_hash(newpass)
+#         db_user[0].password=newpass
+#         db.commit()
+#         return {"message":"Password changed successfully"}
+#     else:
+#         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+#         detail="Wrong Password")

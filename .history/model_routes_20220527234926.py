@@ -273,4 +273,4 @@ def change_password_student(email:EmailStr,oldpass:str,newpass:str,db:Session=De
         return {"message":"Password changed successfully"}
     else:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-        detail="Wrong Credentials")
+        detail="Wrong Password")

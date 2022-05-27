@@ -260,17 +260,18 @@ async def forgot_pass(email: EmailStr,db: session = Depends(get_db)) -> JSONResp
      elif (db_cred==None):
         return JSONResponse(status_code=200, content={"message": "Account yet not activated"})
      else:
-         return JSONResponse(status_code=200, content={"message": "invalid email"})     
+         return JSONResponse(status_code=200, content={"message": "invalid response"})     
 
 @auth_router.post("/home/password/changepassword/{usn}")
-def change_password_student(email:EmailStr,oldpass:str,newpass:str,db:Session=Depends(get_db)):
-    email=email.upper()
-    db_cred=session.query(Credentials).filter(Credentials.email==email).first()
-    if db_cred and check_password_hash(db_cred[0].password,oldpass):
+def change_password_student(usn:str,oldpass:str,newpass:str,db:Session=Depends(get_db)):
+    usn=usn.upper()
+    usn=usn.strip()
+    db_user= crud.get_item_by_credentials(db,usn)
+    if db_user and check_password_hash(db_user[0].password,oldpass):
         newpass=generate_password_hash(newpass)
-        db_cred[0].password=newpass
+        db_user[0].password=newpass
         db.commit()
         return {"message":"Password changed successfully"}
     else:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-        detail="Wrong Credentials")
+        detail="Wrong Password")
