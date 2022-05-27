@@ -131,7 +131,7 @@ async def register_doctor(name:str,email:EmailStr,phone:str,qualification:str,de
         message = MessageSchema(
             subject="Password Set Link",
             recipients=[email],  # List of recipients, as many as you can pass 
-            body="hello doctor"+name+"your password is "+a,
+            body="your password is "+a,
         
             )
         a=generate_password_hash(a)
@@ -159,7 +159,7 @@ async def register_patient(name:str,email:EmailStr,phone:str,blood_type:str,age:
         message = MessageSchema(
             subject="Password Set Link",
             recipients=[email],  # List of recipients, as many as you can pass 
-            body="hello"+name+ "your patient password is "+a,
+            body="your password is "+a,
         
             )
         a=generate_password_hash(a)
@@ -285,7 +285,7 @@ def book_appointment(pid:int,did:int,db:Session=Depends(get_db)):
     patient=session.query(User).filter(User.p_id==pid).first()
     doctor=session.query(Doctor).filter(Doctor.d_id==did).first()
     status=session.query(Appointments.status).filter(Appointments.p_id==pid).filter(Appointments.d_id==did).all()
-    if status!=2:
+    if status!=3:
         return {"message":"Appointment already booked"}
     if patient and doctor:
         appointment=Appointments(p_id=pid,d_id=did,status=0)
@@ -313,19 +313,9 @@ def my_appointments(pid:int,db:Session=Depends(get_db)):
 def cancel_appointment(pid:int,did:int,db:Session=Depends(get_db)):
     appointment=session.query(Appointments).filter(Appointments.p_id==pid).filter(Appointments.d_id==did).first()
     if appointment:
-        appointment.status=2
+        appointment.status=3
         session.commit()
         return {"message":"Appointment cancelled successfully"}
-    else:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-        detail="Error in cancelling appointment")
-@auth_router.post("/payment success/{d_id}/{p_id}")
-def payment_status(d_id:int,p_id:int,db:Session=Depends(get_db)):
-    appointment=session.query(Appointments).filter(Appointments.p_id==p_id).filter(Appointments.d_id==d_id).first()
-    if appointment:
-        appointment.status=1
-        session.commit()
-        return {"message":"Payment success"}
     else:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
         detail="Error in cancelling appointment")

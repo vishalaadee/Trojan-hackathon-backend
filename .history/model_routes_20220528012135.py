@@ -131,7 +131,7 @@ async def register_doctor(name:str,email:EmailStr,phone:str,qualification:str,de
         message = MessageSchema(
             subject="Password Set Link",
             recipients=[email],  # List of recipients, as many as you can pass 
-            body="hello doctor"+name+"your password is "+a,
+            body="hello doctor""your password is "+a,
         
             )
         a=generate_password_hash(a)
