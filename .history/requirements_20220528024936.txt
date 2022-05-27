@@ -36,5 +36,3 @@ python-jose[cryptography]
 numpy
 pandas
 sklearn
-scipy
-scikit-learn

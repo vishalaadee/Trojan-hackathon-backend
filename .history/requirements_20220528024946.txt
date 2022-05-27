@@ -38,3 +38,4 @@ pandas
 sklearn
 scipy
 scikit-learn
+de

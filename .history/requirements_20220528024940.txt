@@ -37,4 +37,4 @@ numpy
 pandas
 sklearn
 scipy
-scikit-learn
+sci
