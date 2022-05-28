@@ -267,8 +267,8 @@ async def forgot_pass(email: EmailStr,db: session = Depends(get_db)) -> JSONResp
 def change_password_student(email:EmailStr,oldpass:str,newpass:str,db:Session=Depends(get_db)):
     email=email.upper()
     db_cred=session.query(Credentials).filter(Credentials.email==email).first()
-    if db_cred and (db_cred[0].password==oldpass):
-        newpass=(newpass)
+    if db_cred and check_password_hash(db_cred[0].password,oldpass):
+        newpass=generate_password_hash(newpass)
         db_cred[0].password=newpass
         db.commit()
         return {"message":"Password changed successfully"}
