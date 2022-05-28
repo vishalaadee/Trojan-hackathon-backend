@@ -362,4 +362,4 @@ async def send_details_appointment(d_id:int,p_id:int,date:str,db:Session=Depends
         await fm.send_message(message)
         return JSONResponse(status_code=200, content={"message": "meet invitation details has been sent"})
     else:
-        return JSONResponse(status_code=200, content={"message": "Appointment not done"})
+        return 
