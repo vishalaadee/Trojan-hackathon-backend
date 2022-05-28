@@ -294,7 +294,7 @@ def book_appointment(pid:int,did:int,db:Session=Depends(get_db)):
         session.commit()
         return {"message":"Appointment requested successfully"}
     else:
-        return {"message":"Invalid Request"}
+        return {"message":"Invalid credentials"}
 
 @auth_router.get("/patient appointments/{p_id}")
 def patient_appointments(pid:int,db:Session=Depends(get_db)):
