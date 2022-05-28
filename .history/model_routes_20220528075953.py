@@ -263,8 +263,8 @@ async def forgot_pass(email: EmailStr,db: session = Depends(get_db)) -> JSONResp
      else:
          return JSONResponse(status_code=200, content={"message": "invalid email"})     
 
-@auth_router.post("/home/password/changepassword/{email}")
-def change_password_user(email:EmailStr,oldpass:str,newpass:str,db:Session=Depends(get_db)):
+@auth_router.post("/home/password/changepassword/{pid}")
+def change_password_student(email:EmailStr,oldpass:str,newpass:str,db:Session=Depends(get_db)):
     email=email.upper()
     db_cred=session.query(Credentials).filter(Credentials.email==email).first()
     if (db_cred.password==oldpass):
