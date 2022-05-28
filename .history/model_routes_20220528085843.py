@@ -338,7 +338,7 @@ def doctor_appointments(d_id:int,db:Session=Depends(get_db)):
     # for i in range(0,appointment_count):
     #     appointment_details["patient_details"].append(pat_details[i])
     #     appointment_details["status"].append(status[i])    
-    return pat_details
+    return at_details
 
 @auth_router.get("/patient details/{p_id}")
 def patient_details(p_id:int,db:Session=Depends(get_db)):

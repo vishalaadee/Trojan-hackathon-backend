@@ -333,12 +333,12 @@ def doctor_appointments(d_id:int,db:Session=Depends(get_db)):
     p_id=session.query(Appointments.p_id).filter(Appointments.d_id==d_id).all()
     appointment_details={"patient_details":[],"status":[]}
     pat_details=db.query(User).filter(User.p_id==p_id[0][0]).all()
-    # status=session.query(Appointments.status).filter(Appointments.d_id==d_id).all()
-    # appointment_count=len(p_id)
-    # for i in range(0,appointment_count):
-    #     appointment_details["patient_details"].append(pat_details[i])
-    #     appointment_details["status"].append(status[i])    
-    return pat_details
+    status=session.query(Appointments.status).filter(Appointments.d_id==d_id).all()
+    appointment_count=len(p_id)
+    for i in range(0,appointment_count):
+        appointment_details["patient_details"].append(pat_details[i])
+        appointment_details["status"].append(status[i])    
+    return appointment_details
 
 @auth_router.get("/patient details/{p_id}")
 def patient_details(p_id:int,db:Session=Depends(get_db)):

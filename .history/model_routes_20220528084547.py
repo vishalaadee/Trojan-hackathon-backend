@@ -299,13 +299,14 @@ def book_appointment(pid:int,did:int,db:Session=Depends(get_db)):
 def patient_appointments(pid:int,db:Session=Depends(get_db)):
     d_id=session.query(Appointments.d_id).filter(Appointments.p_id==pid).all()
     appointment_details={"doctor_details":[],"status":[]}
-    doc_details=db.query(Doctor).filter(Doctor.d_id==d_id[0][0]).all()
-    status=session.query(Appointments.status).filter(Appointments.p_id==pid).all()
+    return 
+    # doc_details=db.query(Doctor).filter(Doctor.d_id==d_id[0][0]).all()
+    # status=session.query(Appointments.status).filter(Appointments.p_id==pid).all()
     # appointment_count=len(d_id)
-    # for i in range(0,appointment_count):
+    # for i in range(appointment_count):
     #     appointment_details["doctor_details"].append(doc_details[i])
-    #     appointment_details["status"].append(status[i][0])    
-    return doc_details
+    #     appointment_details["status"].append(status[i])    
+    # return appointment_details
 
 @auth_router.post("/cancel appointment/{p_id}/{d_id}")
 def cancel_appointment(pid:int,did:int,db:Session=Depends(get_db)):
@@ -333,12 +334,12 @@ def doctor_appointments(d_id:int,db:Session=Depends(get_db)):
     p_id=session.query(Appointments.p_id).filter(Appointments.d_id==d_id).all()
     appointment_details={"patient_details":[],"status":[]}
     pat_details=db.query(User).filter(User.p_id==p_id[0][0]).all()
-    # status=session.query(Appointments.status).filter(Appointments.d_id==d_id).all()
-    # appointment_count=len(p_id)
-    # for i in range(0,appointment_count):
-    #     appointment_details["patient_details"].append(pat_details[i])
-    #     appointment_details["status"].append(status[i])    
-    return pat_details
+    status=session.query(Appointments.status).filter(Appointments.d_id==d_id).all()
+    appointment_count=len(p_id)
+    for i in range(0,appointment_count):
+        appointment_details["patient_details"].append(pat_details[i])
+        appointment_details["status"].append(status[i])    
+    return appointment_details
 
 @auth_router.get("/patient details/{p_id}")
 def patient_details(p_id:int,db:Session=Depends(get_db)):
