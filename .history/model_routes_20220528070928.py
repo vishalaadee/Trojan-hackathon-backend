@@ -333,7 +333,7 @@ def payment_status(d_id:int,p_id:int,db:Session=Depends(get_db)):
 def doctor_appointments(d_id:int,db:Session=Depends(get_db)):
     p_id=session.query(Appointments.p_id).filter(Appointments.d_id==d_id).all()
     appointment_details={"patient_details":[],"status":[]}
-    pat_details=db.query(User).filter(User.p_id==p_id[0][0]).all()
+    pat_details=db.query(User).filter(User.p_id==p_id[0]).all()
     status=session.query(Appointments.status).filter(Appointments.d_id==d_id).all()
     appointment_count=len(p_id)
     for i in range(appointment_count):
@@ -347,7 +347,7 @@ def patient_details(p_id:int,db:Session=Depends(get_db)):
     return patient
 
 @auth_router.post("/send_appointment_details/{d_id}/{p_id}")
-async def send_details_appointment(d_id:int,p_id:int,date:str,db:Session=Depends(get_db)):
+async def send_details_appointment(d_id:int,p_id:int,date:datetime,db:Session=Depends(get_db)):
     status=session.query(Appointments.status).filter(Appointments.p_id==p_id).filter(Appointments.d_id==d_id).first()
     email=session.query(Credentials.email).filter(Credentials.p_id==p_id).first()
     
@@ -355,7 +355,7 @@ async def send_details_appointment(d_id:int,p_id:int,date:str,db:Session=Depends
         message = MessageSchema(
             subject="Consult Meeting Details Link",
             recipients=[email],  # List of recipients, as many as you can pass 
-            body="please join the meeting using the given link: "+str("https://video-chat-app-gus.herokuapp.com/c5d1a684-1aa0-40fb-92ee-75d489927914")+" your date and timings are  "+date 
+            body="please join the meeting using the given link: "+str("https://video-chat-app-gus.herokuapp.com/c5d1a684-1aa0-40fb-92ee-75d489927914")+" your date and timings are  "+str(date) 
             )
         fm = FastMail(conf)
         
