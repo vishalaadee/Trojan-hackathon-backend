@@ -299,14 +299,15 @@ def book_appointment(pid:int,did:int,db:Session=Depends(get_db)):
 @auth_router.get("/patient appointments/{p_id}")
 def patient_appointments(pid:int,db:Session=Depends(get_db)):
     d_id=session.query(Appointments.d_id).filter(Appointments.p_id==pid).all()
-    appointment_details={"doctor_details":[],"status":[]}
-    doc_details=db.query(Doctor).filter(Doctor.d_id==d_id[0][0]).all()
-    status=session.query(Appointments.status).filter(Appointments.p_id==pid).all()
-    appointment_count=len(d_id)
-    for i in range(appointment_count):
-        appointment_details["doctor_details"].append(doc_details[i])
-        appointment_details["status"].append(status[i])    
-    return appointment_details
+    
+    # appointment_details={"doctor_details":[],"status":[]}
+    # doc_details=db.query(Doctor).filter(Doctor.d_id==d_id[0]).all()
+    # status=session.query(Appointments.status).filter(Appointments.p_id==pid).all()
+    # appointment_count=len(d_id)
+    # for i in range(appointment_count):
+    #     appointment_details["doctor_details"].append(doc_details[i])
+    #     appointment_details["status"].append(status[i])    
+    # return appointment_details
 
 @auth_router.post("/cancel appointment/{p_id}/{d_id}")
 def cancel_appointment(pid:int,did:int,db:Session=Depends(get_db)):
