@@ -269,7 +269,7 @@ def change_password_student(email:EmailStr,oldpass:str,newpass:str,db:Session=De
     db_cred=session.query(Credentials).filter(Credentials.email==email).first()
     if db_cred and (db_cred.password==oldpass):
         newpass=(newpass)
-        db_cred.password=newpass
+        db_cred[0].password=newpass
         db.commit()
         return {"message":"Password changed successfully"}
     else:
