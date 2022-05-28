@@ -352,15 +352,15 @@ async def send_details_appointment(d_id:int,p_id:int,date:str,db:Session=Depends
     if status==None:
         return {"message":"Appointment not done"}
     else:
-        if status[0]==0:
-            message = MessageSchema(
-                subject="Consult Meeting Details Link",
-                recipients=[email[0]],  # List of recipients, as many as you can pass 
-                body="please join the meeting using the given link: "+str("https://4667-150-129-63-34.ngrok.io/9970b477-b80f-4410-8570-84428dc8ebc0")+" your date and timings are  "+date 
-                )
-            fm = FastMail(conf)
+        # if status[0]==0:
+        #     message = MessageSchema(
+        #         subject="Consult Meeting Details Link",
+        #         recipients=[email[0]],  # List of recipients, as many as you can pass 
+        #         body="please join the meeting using the given link: "+str("https://14eb-150-129-63-34.ngrok.io/")+" your date and timings are  "+date 
+        #         )
+        #     fm = FastMail(conf)
             
-            await fm.send_message(message)
-            return JSONResponse(status_code=200, content={"message": "meet invitation details has been sent"})
-        else:
-            return JSONResponse(status_code=200, content={"message": "Appointment not done"})
+        #     await fm.send_message(message)
+        #     return JSONResponse(status_code=200, content={"message": "meet invitation details has been sent"})
+        # else:
+        #     return JSONResponse(status_code=200, content={"message": "Appointment not done"})
