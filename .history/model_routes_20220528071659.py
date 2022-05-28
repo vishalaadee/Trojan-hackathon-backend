@@ -349,7 +349,7 @@ def patient_details(p_id:int,db:Session=Depends(get_db)):
 @auth_router.post("/send_appointment_details/{d_id}/{p_id}")
 async def send_details_appointment(d_id:int,p_id:int,date:str,db:Session=Depends(get_db)):
     status=session.query(Appointments.status).filter(Appointments.p_id==p_id).filter(Appointments.d_id==d_id).first()
-    email=session.query(User.email).filter(User.p_id==p_id).first()
+    email=session.query(User.email).filter(Users.p_id==p_id).first()
     
     if status==1:
         message = MessageSchema(
