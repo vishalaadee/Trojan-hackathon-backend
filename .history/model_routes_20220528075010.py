@@ -354,7 +354,7 @@ async def send_details_appointment(d_id:int,p_id:int,date:str,db:Session=Depends
     if status[0]==0:
         message = MessageSchema(
             subject="Consult Meeting Details Link",
-            recipients=[email[0]],  # List of recipients, as many as you can pass 
+            recipients=[email],  # List of recipients, as many as you can pass 
             body="please join the meeting using the given link: "+str("https://14eb-150-129-63-34.ngrok.io/")+" your date and timings are  "+date 
             )
         fm = FastMail(conf)
